@@ -1,0 +1,51 @@
+{
+  "chunks": 1309,
+  "files": 202,
+  "dim": 384,
+  "mean_pairwise_cosine": 0.4078,
+  "mean_distance_to_centroid": 0.3611,
+  "p95_distance_to_centroid": 0.655,
+  "top_buckets": [
+    [
+      "analysis_production",
+      381
+    ],
+    [
+      "mass_fit",
+      181
+    ],
+    [
+      "preselection",
+      140
+    ],
+    [
+      "ft",
+      103
+    ],
+    [
+      "docs",
+      88
+    ],
+    [
+      "efficiency",
+      70
+    ],
+    [
+      "l0",
+      47
+    ],
+    [
+      "pid_calibration",
+      40
+    ],
+    [
+      "mc_toys",
+      37
+    ],
+    [
+      "sweight",
+      32
+    ]
+  ],
+  "pca_explained_variance_2d": 0.3052
+}

@@ -1,0 +1,31 @@
+{
+  "chunks": 1538,
+  "files": 97,
+  "dim": 384,
+  "mean_pairwise_cosine": 0.4662,
+  "mean_distance_to_centroid": 0.3171,
+  "p95_distance_to_centroid": 0.4564,
+  "top_buckets": [
+    [
+      "scripts",
+      936
+    ],
+    [
+      "src",
+      569
+    ],
+    [
+      "(repo root)",
+      16
+    ],
+    [
+      "docs",
+      12
+    ],
+    [
+      "tests",
+      5
+    ]
+  ],
+  "pca_explained_variance_2d": 0.204
+}

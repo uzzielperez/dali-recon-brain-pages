@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DALI Control Room</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--border:#30363d;--fg:#e6edf3;--dim:#8b949e;
+--ok:#3fb950;--warn:#d29922;--bad:#f85149;--accent:#58a6ff;--purple:#bc8cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:14px/1.5 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;
+align-items:baseline;gap:16px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0}
+header .meta{color:var(--dim);font-size:12px}
+nav{display:flex;gap:4px;padding:0 12px;border-bottom:1px solid var(--border);
+flex-wrap:wrap;background:#10151c;position:sticky;top:0;z-index:5}
+nav button{background:none;border:none;color:var(--dim);padding:10px 14px;
+cursor:pointer;font-size:14px;border-bottom:2px solid transparent}
+nav button.on{color:var(--fg);border-bottom-color:var(--accent)}
+main{padding:18px;max-width:1400px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px}
+.card h3{margin:0 0 6px;font-size:15px}
+.kv{display:flex;justify-content:space-between;font-size:13px;color:var(--dim)}
+.kv b{color:var(--fg);font-weight:600}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;
+font-weight:600;vertical-align:middle}
+.b-ok{background:#12261e;color:var(--ok)}.b-warn{background:#2b2008;color:var(--warn)}
+.b-bad{background:#2d1214;color:var(--bad)}.b-info{background:#0f2038;color:var(--accent)}
+.b-dim{background:#1c2128;color:var(--dim)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 9px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+th{color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+code{background:#1c2128;padding:1px 5px;border-radius:4px;font-size:12px}
+svg{width:100%;height:auto;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.edge-d{stroke:#3fb950;stroke-width:2}.edge-p{stroke:#d29922;stroke-width:2;stroke-dasharray:7 4}
+.edge-a{stroke:#8b949e;stroke-width:1.6;stroke-dasharray:2 4}
+.arrow{fill:#3fb950}.arrow-w{fill:#d29922}.arrow-a{fill:#8b949e}
+.nodelbl{fill:#e6edf3;font:600 14px sans-serif}.nodesub{fill:#8b949e;font:11px sans-serif}
+.edgelbl{fill:#c9d1d9;font:11px sans-serif}
+.bar{height:9px;border-radius:5px;background:#21262d;overflow:hidden;min-width:80px}
+.bar i{display:block;height:100%}
+a{text-decoration:none}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.wrap{overflow-x:auto}
+h2{font-size:15px;margin:20px 0 8px;color:var(--accent)}
+h2:first-child{margin-top:0}
+.small{font-size:12px;color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#1c2128;border:1px solid var(--border);border-radius:6px;
+padding:3px 9px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">⚛ DALI Control Room</h1>
+  <span class="meta" id="gen"></span>
+  <span class="meta" id="stamp"></span>
+  <span class="meta">static snapshot — regenerate: <code>dalidash.py --config dalidash.yaml</code></span>
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+<script>
+const D = {"generated": "2026-11-10 18:40 UTC", "title": "DALI Control Room \u2014 reconstruction brain", "project": "dali-recon-brain", "brains": {"lb02lbgammabr": {"branch": "revival-completion-plan-2016", "head": "cde90d8d", "head_date": "2026-11-09", "head_msg": "feat(lecture): detective case files for the OVER/OK systematics bars", "ahead_behind": "## revival-completion-plan-2016...origin/revival-completion-plan-2016 [ahead 16]", "dirty": 15, "commits": [{"h": "cde90d8d", "date": "2026-11-09", "author": "ciperez", "msg": "feat(lecture): detective case files for the OVER/OK systematics bars"}, {"h": "782d00ab", "date": "2026-11-09", "author": "ciperez", "msg": "feat(education): animated reveal.js lecture tab (lb2lg_lecture.html)"}, {"h": "0029afc5", "date": "2026-11-09", "author": "ciperez", "msg": "feat(education): Student Lab tab + first-principles playground CLI"}, {"h": "0a144f89", "date": "2026-11-09", "author": "ciperez", "msg": "ui(dashboard): generic agent prompts + fix prompt overflow past the box"}, {"h": "63f207ac", "date": "2026-11-09", "author": "ciperez", "msg": "ui(dashboard): move Validation Snakefile section to the bottom of the index"}, {"h": "2ed9a238", "date": "2026-11-09", "author": "ciperez", "msg": "feat(snapshot): 3-column benchmark progression table on the dashboard index"}, {"h": "05677f36", "date": "2026-11-09", "author": "ciperez", "msg": "docs(snapshot): 2026-11-09 validation snapshot (systematics loop run)"}, {"h": "5cbc6d85", "date": "2026-11-09", "author": "ciperez", "msg": "feat(syst): AN-equivalent systematics loop + validator + audit trail"}], "docs": 3072, "db": "…/lb02lbgammabr/.cursor/rag_db", "note": "Lb\u2192\u039b\u03b3 branching-fraction analysis", "gold": "lb2lg-analysis", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/lb02lbgammabr_brain.png", "map_local": "lb02lbgammabr_brain.png"}, "Allen": {"branch": "ronald-graph-clustering-mlp-classifier", "head": "dad45bb01f", "head_date": "2026-10-14", "head_msg": "Merge remote-tracking branch 'origin/ronald-graph-clustering-mlp-classifier' into ronald-graph-clustering-mlp-classifier", "ahead_behind": "## ronald-graph-clustering-mlp-classifier...origin/ronald-graph-clustering-mlp-classifier", "dirty": 1, "commits": [{"h": "dad45bb01f", "date": "2026-10-14", "author": "Ronald Caravaca", "msg": "Merge remote-tracking branch 'origin/ronald-graph-clustering-mlp-classifier' into ronald-graph-clustering-mlp-classifier"}, {"h": "d2759127df", "date": "2026-10-14", "author": "Ronald Caravaca", "msg": "Merge remote-tracking branch 'origin/ronald-graph-clustering' into ronald-graph-clustering-mlp-classifier"}, {"h": "5c138bcf8e", "date": "2026-10-13", "author": "Ronald Caravaca", "msg": "Fixing cluster score estimation"}, {"h": "e17c8fa6e9", "date": "2026-10-06", "author": "Ronald Caravaca", "msg": "Optimizing k_sparse_ccl and weigths calculation"}, {"h": "d358001e0b", "date": "2026-10-02", "author": "Ronald Caravaca", "msg": "Optimization in k_compute_cluster_score in second for"}, {"h": "6d3d6e8032", "date": "2026-10-01", "author": "Ronald Caravaca", "msg": "Removing comments and fixing pipeline"}, {"h": "56d5bd5dfd", "date": "2026-10-01", "author": "Ronald Caravaca", "msg": "Adding optimzations to k_compact_clusters"}, {"h": "fdbea997f1", "date": "2026-09-09", "author": "Ronald Caravaca", "msg": "GraphClustering - including merged pi0 candidates as regular clusters"}], "docs": 12985, "db": "…/Allen/.cursor/rag_db", "note": "CUDA clustering + MultiLayerFCNN (Run-5 HLT)", "gold": "recon-allen", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/Allen_brain.png", "map_local": "Allen_brain.png"}, "ecal-reco-gnn": {"branch": "mr-12-realism", "head": "9105732", "head_date": "2026-07-19", "head_msg": "Clarify apples stays max-E (k=25), not seed-frame realism", "ahead_behind": "## mr-12-realism...origin/mr-12-realism", "dirty": 82, "commits": [{"h": "9105732", "date": "2026-07-19", "author": "ciperez", "msg": "Clarify apples stays max-E (k=25), not seed-frame realism"}, {"h": "a998b56", "date": "2026-07-19", "author": "ciperez", "msg": "Add Lightning --ckpt resume for Felipe and seed-frame realism helpers"}, {"h": "123b04b", "date": "2026-03-24", "author": "Felipe Luan Souza De Almeida", "msg": "Apply 1 suggestion(s) to 1 file(s)"}, {"h": "9e6aeea", "date": "2026-03-11", "author": "Felipe Luan Souza De Almeida", "msg": "Apply 1 suggestion(s) to 1 file(s)"}, {"h": "bb711ca", "date": "2026-03-11", "author": "Felipe Luan Souza De Almeida", "msg": "Apply 1 suggestion(s) to 1 file(s)"}, {"h": "a8b0d0c", "date": "2026-03-11", "author": "Felipe Luan Souza De Almeida", "msg": "Apply 1 suggestion(s) to 1 file(s)"}, {"h": "d93409c", "date": "2026-02-20", "author": "Cilicia Uzziel Perez", "msg": "Apply 1 suggestion(s) to 1 file(s)"}, {"h": "370125b", "date": "2026-02-20", "author": "Cilicia Uzziel Perez", "msg": "Apply 1 suggestion(s) to 1 file(s)"}], "docs": 1538, "db": "…/ecal-reco-gnn/.cursor/rag_db", "note": "GarNet / GNNMP / MLP students for ECAL photon reco", "gold": "recon-ecalgnn", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/ecal-reco-gnn_brain.png", "map_local": "ecal-reco-gnn_brain.png"}, "xipf": {"branch": "master", "head": "1faf802", "head_date": "2026-09-17", "head_msg": "fix(cli): adding log files by stage stanalone", "ahead_behind": "## master...origin/master", "dirty": 4, "commits": [{"h": "1faf802", "date": "2026-09-17", "author": "rcaravaca", "msg": "fix(cli): adding log files by stage stanalone"}, {"h": "49012e2", "date": "2026-09-17", "author": "rcaravaca", "msg": "feat(validate): adding model complexity to validate"}, {"h": "4df7f50", "date": "2026-09-17", "author": "rcaravaca", "msg": "refactor(validate): Comparing all onnx models vs pytorch model"}, {"h": "aad6d6a", "date": "2026-09-17", "author": "rcaravaca", "msg": "refactor(config): Refactoring the configuration methodology"}, {"h": "1f8abf0", "date": "2026-09-16", "author": "rcaravaca", "msg": "chore(repo): removing legacy code"}, {"h": "d7e3198", "date": "2026-09-16", "author": "rcaravaca", "msg": "fix(benchmark): Adding the input sample to benchmark and keep ramdom input as option"}, {"h": "6f6914e", "date": "2026-09-16", "author": "rcaravaca", "msg": "refactor(logger): adding logs files per stage and rpts folder"}, {"h": "f825a5d", "date": "2026-09-16", "author": "rcaravaca", "msg": "build(onnx): adding onnx dependancies to .toml files"}], "docs": 367, "db": "…/xipf/.cursor/rag_db", "note": "package \u2192 ONNX \u2192 optimize \u2192 validate \u2192 benchmark", "gold": "recon-xipf", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/xipf_brain.png", "map_local": "xipf_brain.png"}, "dali-ecal-gnn": {"branch": "", "head": "", "head_date": "", "head_msg": "", "ahead_behind": "", "dirty": 0, "commits": [], "docs": 34, "db": "…/dali-ecal-gnn/.cursor/rag_db", "note": "DALI workspace (pipeline.yaml v2, 8 approved steps)", "gold": "dali-ecal-gnn", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/dali-ecal-gnn_brain.png", "map_local": "dali-ecal-gnn_brain.png"}, "bs2phigamma": {"branch": "dalidebug", "head": "803b5b2", "head_date": "2026-07-16", "head_msg": "Add student prompt pack for sPlot/GBR issue tracing.", "ahead_behind": "## dalidebug", "dirty": 9, "commits": [{"h": "803b5b2", "date": "2026-07-16", "author": "ciperez", "msg": "Add student prompt pack for sPlot/GBR issue tracing."}, {"h": "8d3bf0a", "date": "2026-07-16", "author": "ciperez", "msg": "Add dali Figure 6/Table 12 workflow through BDT, sPlot, and GBR reweight."}, {"h": "1db4717", "date": "2026-07-15", "author": "ciperez", "msg": "Add EOS tuple I/O and pre/postselection workflow for ragaidebug"}, {"h": "fb0aa6a", "date": "2024-12-03", "author": "Yingrui Hou", "msg": "update the input branching fractions, taking the br of sub-decay into consideration"}, {"h": "41d93cc", "date": "2024-12-03", "author": "Yingrui Hou", "msg": "update the contamination, efficiency, bkg/signal shapes before BDT"}, {"h": "6ce9d19", "date": "2024-05-24", "author": "Fionn Caitlin Ros Bishop", "msg": "Scripts for FT calibration"}, {"h": "a5a7269", "date": "2024-05-24", "author": "Fionn Caitlin Ros Bishop", "msg": "Scripts to prepare FT calib samples and do DsPi time resolution calib"}, {"h": "032886c", "date": "2024-05-16", "author": "Fionn Caitlin Ros Bishop", "msg": "Selection and splot for BToJpsiK"}], "docs": 1309, "db": "…/bs2phigamma-tdcpv-run1-2-analysis/.cursor/rag_db", "note": "B\u2192\u03c6\u03b3 TDCPV analysis \u2014 SEPARATE project, no gold set yet", "gold": "", "map_url": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/raw/master/docs/brains/bs2phigamma_brain.png", "map_local": "bs2phigamma_brain.png"}, "evalsBrain": {"branch": "master", "head": "30d7cfd", "head_date": "2026-11-05", "head_msg": "fix(rebuild_index): index CUDA sources (.cu/.cuh) \u2014 restores the Allen brain", "ahead_behind": "## master...origin/master [ahead 2]", "dirty": 10, "commits": [{"h": "30d7cfd", "date": "2026-11-05", "author": "ciperez", "msg": "fix(rebuild_index): index CUDA sources (.cu/.cuh) \u2014 restores the Allen brain"}, {"h": "24a4006", "date": "2026-11-05", "author": "ciperez", "msg": "docs: presentation + diagrams of the reconstruction brain and per-repo pipelines"}, {"h": "5be88f6", "date": "2026-11-04", "author": "ciperez", "msg": "docs: session note 2026-11-04_1925 \u2014 xipf UzzieNet ONNX vs graph-clustering throughput benchmark"}, {"h": "3600454", "date": "2026-11-03", "author": "ciperez", "msg": "docs(readme): link dali-reconstruction-brain repo as the recon brain home"}, {"h": "263a0d0", "date": "2026-11-03", "author": "ciperez", "msg": "feat(recon-brain): add xipf, Allen, ecal-reco-gnn gold sets and brain_search MCP tools"}, {"h": "5fa388f", "date": "2026-11-03", "author": "ciperez", "msg": "feat(evals): seed evals brain with gold sets, grader, RAG tools"}, {"h": "a47cfd2", "date": "2026-11-03", "author": "Cilicia Uzziel Perez", "msg": "Initial commit"}], "docs": null, "db": "", "note": "grading harness: gold sets + bench_evals (indexes nothing of its own)", "gold": "", "map_url": "", "map_local": "evalsBrain_brain.png"}}, "cost": {"per_brain": {"lb02lbgammabr": {"chunks": 3072, "chars": 2898715, "index_mb": 34.2}, "Allen": {"chunks": 12985, "chars": 13075609, "index_mb": 132.3}, "ecal-reco-gnn": {"chunks": 1538, "chars": 1558114, "index_mb": 18.2}, "xipf": {"chunks": 367, "chars": 349773, "index_mb": 5.3}, "dali-ecal-gnn": {"chunks": 34, "chars": 30880, "index_mb": 0.8}, "bs2phigamma": {"chunks": 1309, "chars": 1723034, "index_mb": 21.8}}, "total": {"chunks": 19305, "chars": 19636125, "index_mb": 212.6}, "chars_per_token": 4.0, "tokens_total": 4909031, "tokens_per_chunk": 254, "embedder": {"name": "all-MiniLM-L6-v2", "params": "22.7e6", "dim": 384, "source": "chromadb DefaultEmbeddingFunction, tools/rebuild_index.py:6", "note": "the only model DALI itself runs \u2014 DALI has no weights of its own"}, "queries_per_day": [20, 100, 500], "top_k": 3, "answer_tokens": 300, "rebuilds_per_year": 12, "inference": [{"model": "uzzienet (optimized ONNX)", "device": "CPU (onnxruntime)", "ms_per_batch": 0.3724, "batch": 110, "std_ms": 0.0482, "n_samples": 200, "throughput_per_s": 295408, "onnx_bytes": 292145, "source": "xipf model_packages/uzzienet/runs/uzzienet/rpts/benchmark_report.json"}, {"model": "uzzienet (paired A/B, batch 8)", "device": "CPU (onnxruntime)", "ms_per_event": 0.0464, "events_per_s": 21552, "source": "dali-ecal-gnn state/log.jsonl 2026-11-04 (parity 3e-08)", "caveat": "different batch size from the row above \u2014 do not average them"}], "notes": ["GPU time is UNMEASURED: no GPU on the build node, graph-clustering kernels crash on CPU.", "Annualised event rates are compute capacity at the measured latency, not a throughput claim."]}, "pipes": [["ecal-reco-gnn", "xipf", "model \u2192 ONNX export/optimize/benchmark", "demonstrated", "UzzieNet ONNX 0.0464 ms/ev, parity 3e-08 (log 2026-11-04)", null], ["xipf", "Allen", "optimized ONNX \u2192 embedded MLP in graph clustering", "partial", "Allen builds CPU + loads Run-5 MDF; GC kernels crash on CPU (note 1cdb925); GPU slot pending", null], ["ecal-reco-gnn", "Allen", "trained GNN/GarNet weights \u2192 Allen kernels", "architectural", "none yet \u2014 no single event has traversed this", null], ["dali-ecal-gnn", "ecal-reco-gnn", "pipeline.yaml steps \u2192 commands in repo", "demonstrated", "8 steps approved (pipeline.yaml v2, 2026-10-28)", null], ["evalsBrain", "*", "gold sets grade every rebuilt index", "demonstrated", "bench_evals 30/32 OK after Allen .cu/.cuh fix (2026-11-05)", null]], "graphs": [{"id": "lb2lg", "label": "Physics AN \u00b7 Lb\u2192\u039b\u03b3", "repo": "lb02lbgammabr", "source": "…/lb02lbgammabr/Snakefile", "link": "https://lb2lg.web.cern.ch/validation.html", "link_label": "validation site", "link_note": "", "nodes": [{"name": "preflight_datasets", "layer": 0, "note": "2016 gold EOS paths gate", "link": ""}, {"name": "closure_signal_fit", "layer": 1, "note": "\u039b\u03b3 signal yield", "link": ""}, {"name": "closure_norm_fit", "layer": 1, "note": "K*\u03b3 normalisation", "link": ""}, {"name": "closure_efficiency_generator", "layer": 1, "note": "generator eff", "link": ""}, {"name": "closure_efficiency_datasets", "layer": 1, "note": "step-by-step eff", "link": ""}, {"name": "bdt_cut_scan", "layer": 1, "note": "standalone BDT scan", "link": ""}, {"name": "kstgamma_model_scan", "layer": 1, "note": "heavy: signal model", "link": ""}, {"name": "closure_test", "layer": 1, "note": "per-step overlay, {step}", "link": ""}, {"name": "closure_br", "layer": 2, "note": "BR = yields \u00d7 effs", "link": ""}, {"name": "kstgamma_topology_scan", "layer": 2, "note": "needs model scan", "link": ""}, {"name": "report_bdt", "layer": 2, "note": "BDT_VALIDATION.html", "link": ""}, {"name": "closure_summary", "layer": 3, "note": "", "link": ""}, {"name": "report_closure_massfit", "layer": 4, "note": "", "link": ""}, {"name": "report_massfit_mc", "layer": 4, "note": "", "link": ""}, {"name": "report_efficiency", "layer": 4, "note": "", "link": ""}, {"name": "report_detailed", "layer": 4, "note": "", "link": ""}, {"name": "report_validation_snapshot", "layer": 4, "note": "", "link": ""}, {"name": "report_fit_systematics", "layer": 4, "note": "", "link": ""}, {"name": "validation_mass_fits", "layer": 5, "note": "", "link": ""}, {"name": "validation_efficiency", "layer": 5, "note": "", "link": ""}, {"name": "validation_detailed", "layer": 5, "note": "", "link": ""}, {"name": "validation_bdt", "layer": 5, "note": "", "link": ""}, {"name": "validation_fit_systematics", "layer": 5, "note": "", "link": ""}, {"name": "validation_manifest", "layer": 5, "note": "agent manifest", "link": ""}, {"name": "validation_core", "layer": 6, "note": "no heavy scans", "link": ""}, {"name": "validation_all", "layer": 7, "note": "SKIP_HEAVY gates 2 branches", "link": ""}, {"name": "build_public_site", "layer": 6, "note": "docs/public_html_index.html", "link": ""}, {"name": "validation_publish", "layer": 8, "note": "lb2lg.web.cern.ch", "link": "https://lb2lg.web.cern.ch/validation.html"}], "pipes": [["preflight_datasets", "closure_signal_fit", ".preflight_ok", "demonstrated", "Snakefile:16", null], ["preflight_datasets", "closure_norm_fit", ".preflight_ok", "demonstrated", "Snakefile:38", null], ["preflight_datasets", "closure_efficiency_generator", ".preflight_ok", "demonstrated", "Snakefile:67", null], ["preflight_datasets", "closure_efficiency_datasets", ".preflight_ok", "demonstrated", "Snakefile:83", null], ["closure_signal_fit", "closure_br", "signal_fit.log \u2192 yield", "demonstrated", "Snakefile:101", null], ["closure_norm_fit", "closure_br", "kstgamma_fit.json", "demonstrated", "Snakefile:101", null], ["closure_efficiency_generator", "closure_br", "GEN_EFF_JSON", "demonstrated", "Snakefile:101", null], ["closure_br", "closure_summary", "br_calculation.log", "demonstrated", "Snakefile:136", null], ["kstgamma_model_scan", "kstgamma_topology_scan", "MODEL_SCAN_JSON", "demonstrated", "Snakefile:327", null], ["bdt_cut_scan", "report_bdt", "BDT_SCAN_JSON", "demonstrated", "Snakefile:301", null], ["closure_summary", "report_closure_massfit", "closure_summary.json", "demonstrated", "Snakefile:189", null], ["closure_summary", "report_massfit_mc", "closure_summary.json", "demonstrated", "Snakefile:203", null], ["closure_summary", "report_efficiency", "summary + both eff jsons", "demonstrated", "Snakefile:217", null], ["closure_summary", "report_detailed", "DETAILED_VALIDATION.html", "demonstrated", "Snakefile:236", null], ["closure_summary", "report_validation_snapshot", "snapshot doc", "demonstrated", "Snakefile:251", null], ["closure_summary", "report_fit_systematics", "summary + both scan jsons", "demonstrated", "Snakefile:344", null], ["kstgamma_topology_scan", "report_fit_systematics", "TOPO_SCAN_JSON", "demonstrated", "Snakefile:344", null], ["report_closure_massfit", "validation_mass_fits", "CLOSURE_MASS_FIT_VERIFICATION.html", "demonstrated", "Snakefile:438", null], ["report_efficiency", "validation_efficiency", "EFFICIENCY_VERIFICATION_RESULTS.html", "demonstrated", "Snakefile:445", null], ["report_detailed", "validation_detailed", "DETAILED_VALIDATION.html", "demonstrated", "Snakefile:451", null], ["report_bdt", "validation_bdt", "BDT_VALIDATION.html + scan", "demonstrated", "Snakefile:464", null], ["report_fit_systematics", "validation_fit_systematics", "MASSFIT_TOPOLOGY_VALIDATION.html", "demonstrated", "Snakefile:457", null], ["closure_summary", "validation_manifest", "agent manifest", "demonstrated", "Snakefile:411", null], ["validation_mass_fits", "validation_core", "rules=[\u2026]", "demonstrated", "Snakefile:470", null], ["validation_efficiency", "validation_core", "rules=[\u2026]", "demonstrated", "Snakefile:470", null], ["validation_detailed", "validation_core", "rules=[\u2026]", "demonstrated", "Snakefile:470", null], ["report_validation_snapshot", "validation_core", "rules=[\u2026]", "demonstrated", "Snakefile:470", null], ["validation_core", "validation_all", "always", "demonstrated", "Snakefile:481", null], ["validation_fit_systematics", "validation_all", "only when SKIP_HEAVY is off", "demonstrated", "Snakefile:481", null], ["validation_bdt", "validation_all", "only when SKIP_HEAVY is off", "demonstrated", "Snakefile:481", null], ["validation_manifest", "validation_all", "always", "demonstrated", "Snakefile:481", null], ["validation_all", "validation_publish", "validated set", "demonstrated", "Snakefile:495", null], ["build_public_site", "validation_publish", "rendered HTML", "demonstrated", "Snakefile:495", null], ["report_closure_massfit", "build_public_site", "site page", "demonstrated", "Snakefile:394", null], ["report_efficiency", "build_public_site", "site page", "demonstrated", "Snakefile:394", null], ["report_detailed", "build_public_site", "site page", "demonstrated", "Snakefile:394", null]]}, {"id": "bs2phigamma", "label": "Physics AN \u00b7 B\u2192\u03c6\u03b3", "repo": "bs2phigamma", "source": "…/bs2phigamma-tdcpv-run1-2-analysis/workflow/dali/2026-07-16_figure6-table12_through-bdt/2026-07-16_figure6-table12_through-bdt.snake", "link": "", "link_label": "live site", "link_note": "no public site \u2014 analysis is private", "nodes": [{"name": "unfiltered_tuple", "layer": 0, "note": "raw ntuple", "link": ""}, {"name": "preselection", "layer": 1, "note": "build/bin/preselection", "link": ""}, {"name": "postselection", "layer": 2, "note": "build/bin/postselection", "link": ""}, {"name": "pid_calibration", "layer": 1, "note": "prepare/charged/neutral", "link": ""}, {"name": "pid_selection", "layer": 2, "note": "", "link": ""}, {"name": "bdt_evaluation", "layer": 3, "note": "CatBoost, interim WP", "link": ""}, {"name": "time_resolution", "layer": 2, "note": "FT \u03c4 resolution", "link": ""}, {"name": "tau_fit", "layer": 3, "note": "untagged \u03c4 fit", "link": ""}, {"name": "mass_fit", "layer": 4, "note": "signal shape", "link": ""}, {"name": "sweight", "layer": 5, "note": "sPlot/sWeight", "link": ""}, {"name": "reweight_gbr", "layer": 6, "note": "GBR reweight", "link": ""}, {"name": "figure6_table12", "layer": 7, "note": "paper checkpoint", "link": ""}], "pipes": [["unfiltered_tuple", "preselection", "tuple \u2192 preselected root", "demonstrated", "workflow/snakefiles/preselection.snake", null], ["preselection", "postselection", "preselection/{job}.root", "demonstrated", "2026-07-16_figure6-table12_through-bdt.snake", null], ["pid_calibration", "pid_selection", "calibrated DLL", "demonstrated", "workflow/snakefiles/pid_selection.snake", null], ["postselection", "pid_selection", "postselected root + DLL", "demonstrated", "workflow/snakefiles/pid_selection.snake", null], ["postselection", "bdt_evaluation", "postselection/{job}.root", "demonstrated", "2026-07-16_figure6-table12_through-bdt.snake", null], ["pid_selection", "bdt_evaluation", "PID-cleaned sample \u2192 BDT", "demonstrated", "workflow/snakefiles/bdt_evaluation.snake", null], ["time_resolution", "tau_fit", "resolution model", "demonstrated", "workflow/snakefiles/untagged_tau_fit.snake", null], ["bdt_evaluation", "mass_fit", "BDT-selected sample", "demonstrated", "workflow/snakefiles/mass_fit.snake", null], ["mass_fit", "sweight", "signal/background fraction", "demonstrated", "workflow/snakefiles/sweight.snake", null], ["sweight", "reweight_gbr", "sWeights \u2192 GBR weights", "demonstrated", "workflow/snakefiles/simplified_sweight.snake", null], ["reweight_gbr", "figure6_table12", "reweighted sample \u2192 Figure 6 / Table 12", "demonstrated", "workflow/dali/2026-07-16_figure6-table12_through-bdt", null], ["tau_fit", "figure6_table12", "\u03c4 fit inputs to the paper table", "architectural", "none yet \u2014 the stamp stops at the interim BDT", null]]}], "evals": {"gold": [{"id": "lb2lg-analysis", "index": "…/lb02lbgammabr/.cursor/rag_db", "collection": "lb02lbgammabr", "source": "ad-hoc gold set from analysis workflow docs (bench_tool_calling.py), 2026-11-03", "status": "ok", "items": [{"query": "how are the BDT folding weights trained and applied", "expected_path": "bdt|TASK_LIST_BR"}, {"query": "vertex combination and kaon PID cuts", "expected_path": "cuts/|preselection"}, {"query": "efficiency calculation per bin in nTracks", "expected_path": "effs|efficiency"}, {"query": "mass sideband fit for the signal yield", "expected_path": "fit|yield|mass"}, {"query": "systematic uncertainty from BDT working point", "expected_path": "syst|systematic|uncert", "status": "needs_review"}]}, {"id": "dali-ecal-gnn", "index": "…/dali-ecal-gnn/.cursor/rag_db", "collection": "dali-ecal-gnn", "source": "derived from state/pipeline.yaml v2 and reports/ (2026-11-03)", "status": "ok", "items": [{"query": "which pipeline lines were human approved", "expected_path": "state/pipeline.yaml"}, {"query": "what blocked the snakemake dry run", "expected_path": "state/log.jsonl", "status": "needs_review"}, {"query": "energy resolution reference histograms chi2 tolerance", "expected_path": "state/pipeline.yaml"}, {"query": "knowledge distillation teacher student steps", "expected_path": "state/pipeline.yaml"}, {"query": "resolution negative control shuffled input", "expected_path": "state/pipeline.yaml"}]}, {"id": "negative-controls", "description": "must NOT return a confident hit; top cosine > 0.45 = tool is lying", "items": [{"query": "purple flamingo cross section in femtobarns per banana", "expect": "miss"}, {"query": "ZZ 9zzQ kqXv blorp fnord", "expect": "miss"}]}, {"id": "recon-xipf", "index": "…/xipf/.cursor/rag_db", "collection": "xipf", "source": "derived from xipf README + AGENTS.md, 2026-11-03", "status": "ok", "items": [{"query": "how is a PyTorch model exported to ONNX", "expected_path": "export/pytorch_to_onnx"}, {"query": "which execution providers does the onnxruntime backend support", "expected_path": "backends/onnxruntime"}, {"query": "how to register a new inference backend", "expected_path": "inference/factory"}, {"query": "model package zip manifest validation", "expected_path": "xipf_packager"}]}, {"id": "recon-allen", "index": "…/Allen/.cursor/rag_db", "collection": "Allen", "source": "derived from ronald-graph-clustering branch diff, 2026-11-03", "pinned_ref": "ronald-graph-clustering-mlp-classifier @ dad45bb01f", "status": "ok", "items": [{"query": "connected components clustering kernel sparse CCL", "expected_path": "graph_clustering/src/ConnectedComponents"}, {"query": "build graph from calorimeter cells edges", "expected_path": "graph_clustering/src/GraphBuilding"}, {"query": "cluster score estimation weights", "expected_path": "graph_clustering/src/ClusterAnalysis"}, {"query": "CaloCluster struct definition position energy size fields", "expected_path": "event_model/calo/include/CaloCluster"}]}, {"id": "recon-ecalgnn", "index": "…/ecal-reco-gnn/.cursor/rag_db", "collection": "ecal-reco-gnn", "source": "derived from ecal-reco-gnn README + src layout, 2026-11-03", "status": "ok", "items": [{"query": "train message passing GNN on ECAL clusters lightning trainer", "expected_path": "train|trainer|model_GNNMP"}, {"query": "build graphs from cluster features kNN", "expected_path": "src/ecal_reco_gnn/graphs"}, {"query": "evaluate energy resolution predictions eval script", "expected_path": "eval|resolution"}, {"query": "GarNet attention aggregator scaler architecture", "expected_path": "models/GarNet"}]}], "latest": {"ts": "2026-11-05T17:35:00", "gold": "…/evalsBrain/evals/gold.yaml", "passed": 30, "total": 32, "ok": true, "results": [{"set": "lb2lg-analysis", "db": "lb02lbgammabr", "query": "how are the BDT folding weights trained and applied", "rank": 3, "latency_s": 0.601, "pass": true, "needs_review": false}, {"set": "lb2lg-analysis", "db": "lb02lbgammabr", "query": "vertex combination and kaon PID cuts", "rank": 1, "latency_s": 0.35, "pass": true, "needs_review": false}, {"set": "lb2lg-analysis", "db": "lb02lbgammabr", "query": "efficiency calculation per bin in nTracks", "rank": 2, "latency_s": 0.369, "pass": true, "needs_review": false}, {"set": "lb2lg-analysis", "db": "lb02lbgammabr", "query": "mass sideband fit for the signal yield", "rank": 2, "latency_s": 0.326, "pass": true, "needs_review": false}, {"set": "lb2lg-analysis", "db": "lb02lbgammabr", "query": "systematic uncertainty from BDT working point", "rank": null, "latency_s": 0.334, "pass": false, "needs_review": true}, {"set": "dali-ecal-gnn", "db": "dali-ecal-gnn", "query": "which pipeline lines were human approved", "rank": 1, "latency_s": 0.426, "pass": true, "needs_review": false}, {"set": "dali-ecal-gnn", "db": "dali-ecal-gnn", "query": "what blocked the snakemake dry run", "rank": null, "latency_s": 0.325, "pass": false, "needs_review": true}, {"set": "dali-ecal-gnn", "db": "dali-ecal-gnn", "query": "energy resolution reference histograms chi2 tolerance", "rank": 1, "latency_s": 0.3, "pass": true, "needs_review": false}, {"set": "dali-ecal-gnn", "db": "dali-ecal-gnn", "query": "knowledge distillation teacher student steps", "rank": 1, "latency_s": 0.32, "pass": true, "needs_review": false}, {"set": "dali-ecal-gnn", "db": "dali-ecal-gnn", "query": "resolution negative control shuffled input", "rank": 1, "latency_s": 0.317, "pass": true, "needs_review": false}, {"set": "negative-controls", "db": "lb02lbgammabr", "query": "purple flamingo cross section in femtobarns per banana", "top_cos": 0.235, "pass": true}, {"set": "negative-controls", "db": "dali-ecal-gnn", "query": "purple flamingo cross section in femtobarns per banana", "top_cos": 0.1477, "pass": true}, {"set": "negative-controls", "db": "xipf", "query": "purple flamingo cross section in femtobarns per banana", "top_cos": 0.1539, "pass": true}, {"set": "negative-controls", "db": "Allen", "query": "purple flamingo cross section in femtobarns per banana", "top_cos": 0.2308, "pass": true}, {"set": "negative-controls", "db": "ecal-reco-gnn", "query": "purple flamingo cross section in femtobarns per banana", "top_cos": 0.2219, "pass": true}, {"set": "negative-controls", "db": "lb02lbgammabr", "query": "ZZ 9zzQ kqXv blorp fnord", "top_cos": 0.2787, "pass": true}, {"set": "negative-controls", "db": "dali-ecal-gnn", "query": "ZZ 9zzQ kqXv blorp fnord", "top_cos": 0.1887, "pass": true}, {"set": "negative-controls", "db": "xipf", "query": "ZZ 9zzQ kqXv blorp fnord", "top_cos": 0.1562, "pass": true}, {"set": "negative-controls", "db": "Allen", "query": "ZZ 9zzQ kqXv blorp fnord", "top_cos": 0.3699, "pass": true}, {"set": "negative-controls", "db": "ecal-reco-gnn", "query": "ZZ 9zzQ kqXv blorp fnord", "top_cos": 0.2265, "pass": true}, {"set": "recon-xipf", "db": "xipf", "query": "how is a PyTorch model exported to ONNX", "rank": 1, "latency_s": 0.398, "pass": true, "needs_review": false}, {"set": "recon-xipf", "db": "xipf", "query": "which execution providers does the onnxruntime backend support", "rank": 1, "latency_s": 0.335, "pass": true, "needs_review": false}, {"set": "recon-xipf", "db": "xipf", "query": "how to register a new inference backend", "rank": 1, "latency_s": 0.342, "pass": true, "needs_review": false}, {"set": "recon-xipf", "db": "xipf", "query": "model package zip manifest validation", "rank": 2, "latency_s": 0.384, "pass": true, "needs_review": false}, {"set": "recon-allen", "db": "Allen", "query": "connected components clustering kernel sparse CCL", "rank": 3, "latency_s": 0.364, "pass": true, "needs_review": false}, {"set": "recon-allen", "db": "Allen", "query": "build graph from calorimeter cells edges", "rank": 2, "latency_s": 0.333, "pass": true, "needs_review": false}, {"set": "recon-allen", "db": "Allen", "query": "cluster score estimation weights", "rank": 1, "latency_s": 0.3, "pass": true, "needs_review": false}, {"set": "recon-allen", "db": "Allen", "query": "CaloCluster struct definition position energy size fields", "rank": 1, "latency_s": 0.238, "pass": true, "needs_review": false}, {"set": "recon-ecalgnn", "db": "ecal-reco-gnn", "query": "train message passing GNN on ECAL clusters lightning trainer", "rank": 1, "latency_s": 0.264, "pass": true, "needs_review": false}, {"set": "recon-ecalgnn", "db": "ecal-reco-gnn", "query": "build graphs from cluster features kNN", "rank": 1, "latency_s": 0.273, "pass": true, "needs_review": false}, {"set": "recon-ecalgnn", "db": "ecal-reco-gnn", "query": "evaluate energy resolution predictions eval script", "rank": 1, "latency_s": 0.275, "pass": true, "needs_review": false}, {"set": "recon-ecalgnn", "db": "ecal-reco-gnn", "query": "GarNet attention aggregator scaler architecture", "rank": 1, "latency_s": 0.236, "pass": true, "needs_review": false}]}, "history": [{"ts": "2026-11-03T16:39:30", "passed": 8, "total": 14, "ok": false}, {"ts": "2026-11-03T16:40:18", "passed": 12, "total": 14, "ok": false}, {"ts": "2026-11-05T17:34:44", "passed": 30, "total": 32, "ok": true}, {"ts": "2026-11-05T17:35:00", "passed": 30, "total": 32, "ok": true}]}, "improve": {"changes": [{"ts": "2026-11-03T16:39:30Z", "target": "framework", "change": "bench_evals.py first run against 4 rebuilt indexes", "before": null, "after": "8/14", "kept": true, "reason": "baseline established", "ref": null}, {"ts": "2026-11-03T16:40:18Z", "target": "agent", "change": "gold.yaml: correct expected_path regexes (were wrong, not the indexes)", "before": "8/14", "after": "12/14", "kept": true, "reason": "failure was in the test, not the system", "ref": null}, {"ts": "2026-11-05T17:35:00Z", "target": "brain", "change": "rebuild_index.py CODE_EXTS += .cu/.cuh", "before": "7224 chunks, recon-allen 0/4", "after": "12985 chunks, recon-allen 4/4", "kept": true, "reason": "686 CUDA files were unindexable", "ref": "Allen@dad45bb01f"}, {"ts": "2026-11-10T00:00:00Z", "target": "agent", "change": "pipeline rule: no edge without evidence (Allen->lb02lbgammabr, Allen->bs2phigamma removed)", "before": "2 unevidenced edges rendered as architectural", "after": "0; unevidenced edges auto-demoted to inferred by dalidash", "kept": true, "reason": "human correction; unverified adjacency presented as fact", "ref": null}, {"ts": "2026-11-10T00:00:00Z", "target": "framework", "change": "dalidash.py --check validates graph edges; negative control must fail", "before": "graph validation silently dead (wrong scope)", "after": "planted bad edge reported, exit 1", "kept": true, "reason": "caught by negative control, not by review", "ref": null}], "trend": [{"ts": "2026-11-03T16:39:30", "passed": 8, "total": 14, "ok": false}, {"ts": "2026-11-03T16:40:18", "passed": 12, "total": 14, "ok": false}, {"ts": "2026-11-05T17:34:44", "passed": 30, "total": 32, "ok": true}, {"ts": "2026-11-05T17:35:00", "passed": 30, "total": 32, "ok": true}], "by_target": {"framework": {"n": 2, "kept": 2}, "agent": {"n": 2, "kept": 2}, "brain": {"n": 1, "kept": 1}}, "guard": {"gold_pass": 30, "gold_total": 32, "runs_logged": 4, "negative_controls": 10, "negative_controls_total": 10}}, "dali": {"steps": [{"id": "presel_garnet_mr", "desc": "GarNet MR presel manifest + graph presel (pb_only, fsouzade_lumi15)", "checks": 1}, {"id": "train_garnet_mr", "desc": "GarNet MR training (base line)", "checks": 1}, {"id": "presel_cross_justin", "desc": "GarNet arch + Justin featurechanges presel (knn_v2_k=25_maxE)", "checks": 1}, {"id": "train_cross_justin", "desc": "Training with Justin presel features (cross line)", "checks": 1}, {"id": "train_garnet_teacher", "desc": "GarNet teacher training (irvin experiments)", "checks": 1}, {"id": "distill_garnet", "desc": "Knowledge distillation from GarNet teacher to GNN/MLP students", "checks": 1}, {"id": "inference_benchmark", "desc": "Inference benchmark over teacher + distilled students", "checks": 2}, {"id": "resolution", "desc": "Energy resolution histograms + superimpose via resolution_plots_v6, per line, vs reference histos (garnet_mr12", "checks": 3}], "log": [{"ts": "2026-11-04", "stage": "report", "step": "onboarding-doc", "attempt": 1, "command": "brain_search(ecal-reco-gnn,xipf,Allen) -> reports/deep-learning-reco-onboarding.md", "change": "wrote beginner pipeline map: input eng -> train -> xipf ONNX export/parity -> Allen .cuh codegen -> throughput; proposed skills onnx_export/cuda_codegen/allen_throughput", "result": "doc written; 4 items marked needs_review (us budget, seed plumbing, timing unc, ONNX->cuh generator)"}, {"ts": "2026-11-04", "stage": "index", "step": "repo-map", "attempt": 1, "command": "resolve repo remotes + local paths for all 6 stages", "change": "recorded ecal-reco-gnn/xipf/Allen remotes+paths+HEAD; verified 9 stage files exist on disk", "result": "all repos present; ecal-reco-gnn@lasalle+jubartz-upstream, xipf@1faf802, Allen@8e6d2f1269"}, {"ts": "2026-11-04", "stage": "build", "step": "skill-allen_throughput", "attempt": 1, "command": "skills/allen_throughput/SKILL.md from _template", "change": "new capability skill: uzzienet-onnx vs graph-clustering throughput, paired-interleaved timing rule, cpu-reference caveat for graph clustering", "result": "skill registered; pipeline lines added pending reconcile approval"}, {"ts": "2026-11-04", "stage": "run", "step": "allen_throughput", "attempt": 1, "command": "xipf run pipeline.uzzienet.yaml + ab_latency.py + graph_clustering_cpu_ref.py", "change": "regenerated graphs from correct cache e3ac74c8 (seed-frame presel of AUTO_6); re-ran full xipf pipeline; paired A/B latency; CPU-reference graph clustering on same 205 events", "result": "uzzienet 0.0464 ms/ev ~21.5k ev/s @B=8 (paired, opt=no diff CI[-0.0036,+0.0090]); gc-ref 0.0915 ms/ev ~10.9k ev/s; parity 3e-08; neg ctrls PASS; morning resolution numbers retracted (wrong cache c43d5d96: corr 0.683 -> 0.985, bias +0.127 -> +0.0006 GeV)"}, {"ts": "2026-11-04", "stage": "run", "step": "spacal-fast-reco-setup", "attempt": 1, "command": "scripts/setup_environment.sh", "result": "BLOCKED: no ../stack build; Run-5 config identified options/optionfile_PicoCal.py; Allen PicoCal on GaelleDev-Run5AllenStandalone (fetched d149bcbe34), disjoint from ronald-graph-clustering; no GPU on node -> escalate for A100 slot"}, {"ts": "2026-11-04", "stage": "run", "step": "allen-cpu-build", "attempt": 1, "command": "cmake STANDALONE=ON TARGET_DEVICE=CPU LCG_106c + cppzmq_DIR fix; external/LHCb->run5", "result": "Allen builds (100%, ~11min) and loads geometry+conditions with pair upgrade_mc_minbias_scifi_v5_000_newLHCbID.mdf + geo 20231017_new_SciFi; crash inside GC kernels on CPU (heap corruption) -> upstream/GPU issue; crash matrix + pairing rule in brain note 1cdb925"}, {"ts": "2026-11-05T17:04:00Z", "stage": "report", "action": "doc-add", "step": null, "attempt": 1, "status": "ok", "detail": "Created markdown presentation + graphviz diagrams of the DALI reconstruction brain and the pipelines in each connected repo. Workspace copy: docs/2026-11-05_dali-reconstruction-brain_presentation.md (+ docs/diagrams/{arch,edges,pipelines}.{dot,png}, docs/brains/ snapshot). Canonical doc added to evalsBrain: docs/2026-11-05_dali-reconstruction-brain/{presentation.md,README.md,arch|edges|pipelines.dot|png}.", "sources": ["evalsBrain/tools/rag_mcp_v2.py BRAIN_REGISTRY", "evalsBrain/tools/brains.tsv", "evalsBrain/docs/brains/brains.json (2026-11-04)", "MCP brain_list + brain_search 2026-11-05", "live clones: ecal-reco-gnn, xipf, Allen@dad45bb01f, lb02lbgammabr, bs2phigamma-tdcpv-run1-2-analysis", "state/pipeline.yaml v2"], "needs_review": ["Allen index returns 'no collections' -> 8840 chunks invisible to brain_search; rebuild + re-grade with bench_evals.py", "bs2phigamma indexed but has no gold set", "ecal-reco-gnn->Allen and Allen->analysis edges are architectural, not demonstrated: marked needs_review in deck", "dali-reconstruction-brain repo not cloned locally; docs staged in evalsBrain for push"]}, {"ts": "2026-11-05T17:38:00Z", "stage": "run", "action": "rebuild-index+grade", "step": "allen-brain", "attempt": 3, "status": "ok", "detail": "Allen brain restored. Root cause was NOT the Nov-3 crash and NOT the branch: rebuild_index.py CODE_EXTS lacked .cu/.cuh, so 686 tracked CUDA files (411 .cuh + 275 .cu) were unindexable. Attempt1 (873 files) -> 7224 chunks, all 4 recon-allen gold items FAIL (top cos ~0.46 on velo_reconstruction.py / draw_ip_resolution.py). Attempt2: added .cu/.cuh to CODE_EXTS, file list 1559 files -> 12985 chunks (5761 CUDA), swapped into Allen/.cursor/rag_db. bench_evals.py: 30/32 pass, verdict=OK, exit 0; recon-allen 4/4 PASS (ranks 3,2,1,1). 2 remaining misses are pre-existing needs_review items (lb2lg-analysis BDT working point; dali-ecal-gnn snakemake dry-run blocker).", "sources": ["evalsBrain/tools/rebuild_index.py CODE_EXTS", "Allen git ls-files ext histogram", "evalsBrain/evals/gold.yaml recon-allen", "evalsBrain/evals/runs.jsonl (new run 2026-11-05T17:35)"], "needs_review": ["docs/brains/brains.json stale for Allen: 8840 -> 12985 chunks, mean pairwise cos 0.3718 (was 0.357), mean dist centroid 0.3902 (was 0.4013), p95 0.6009 (was 0.5749); regenerate with viz_all_brains.py", "recon-allen gold set is branch-scoped: pinned_ref recorded in gold.yaml (ronald-graph-clustering-mlp-classifier @ dad45bb01f); rebuild from master = true negatives", "presentation.md still quotes Allen 8840 chunks / BROKEN index; needs update after viz rerun", "Allen/.cursor/rag_db.broken-20261105 husk kept for forensics; delete once happy"]}], "open_questions": "# Open questions \u2014 ecal-reco-gnn (reconcile stage)\n\nResolved 2026-10-28 (human review):\n- Q1 step boundaries: **approved** \u2014 all lines except Felipe; base lines are\n  garnet_mr, irvin (teacher+distillation), justin cross presel. pipeline.yaml v2.\n- Q2 canonical entry points: per-line `run.sh` (presel_compare) and\n  `irvin/experiments/*` for training; resolution via `run_resolution_v6.sh`.\n\nStill open:\n3. **Input data**: `data/fsouzade_lumi15/` and\n   `data/resolution/inputs_garnet_mr12_v6.root` must be staged into the\n   workspace (or symlinks to the canonical EOS/cache copies). Which exact\n   small sample for the small-input rule?\n4. **References**: timing numbers have no uncertainty \u2192 `needs_review`.\n   Resolution references = garnet_mr12 5/9-bin histos in repo (status ok);\n   confirm they are the approved reference run.\n5. **Determinism**: training is stochastic; confirm seed plumbing in\n   `train.py`/Lightning so `determinism` checks are meaningful.\n6. **strace trace edges**: `state/trace_edges.json` not produced yet \u2014 needs a\n   small real run (env: `ecalgnn311.yaml` conda env). All edges currently\n   `static`.\n"}, "skills": [["opencode (global)", ["_template", "ap-starterkit-execution", "cms-higgs-opendata", "dali", "harness-tutorial", "membrane", "reviewer-commenter", "reviewer-referee", "writing-analysis-note", "writing-internal-note", "writing-tdr"]], ["lb02lbgammabr", ["an-assurance", "an-pipeline-runner", "an-systematics", "an-validation"]], ["lb2lg-harness", ["an-assurance", "an-pipeline-runner", "an-validation"]], ["dali-ecal-gnn", ["_template", "allen_throughput", "dali"]]], "tools": [["brain MCP (rag-memory)", "brain_list / brain_search / rag_search over all rebuilt indexes"], ["rebuild_index.py", "rebuild a chroma rag_db from a repo (CODE_EXTS incl. .cu/.cuh)"], ["bench_evals.py", "grade rebuilt indexes against gold.yaml; verdict gates regressions"], ["dalidash.py", "config-driven dashboard builder \u2014 this page"], ["membrane", "gate reads / filter quotes / tail logs \u2014 security boundary"], ["xipf CLI", "export \u2192 optimize \u2192 validate \u2192 benchmark \u2192 report from YAML"], ["Snakemake (DALI build)", "pipeline.yaml mirrored into Snakefiles; -n and --dag must pass"]], "brain_names": ["lb02lbgammabr", "Allen", "ecal-reco-gnn", "xipf", "dali-ecal-gnn", "bs2phigamma", "evalsBrain"], "docs": {"brains_tree": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain/-/tree/master/docs/brains", "site": "https://dali-dashboard.web.cern.ch/", "repo": "https://gitlab.cern.ch/lasalle/dali-reconstruction-brain", "maps_available": ["Allen", "bs2phigamma", "dali-ecal-gnn", "ecal-reco-gnn", "lb02lbgammabr", "xipf"]}};
+document.getElementById('gen').textContent = 'generated ' + D.generated;
+if (D.title) { document.getElementById('title').textContent = '⚛ ' + D.title; document.title = D.title; }
+
+// Tabs: the cross-brain graph, then one tab per config-declared DAG, then the
+// fixed views. Graphs come from the config, so a project adds a tab by adding
+// YAML — nothing here is project-specific.
+const TABS = [
+  ['pipes','Pipes'],
+  ...(D.graphs||[]).map(g=>['g:'+g.id, g.label]),
+  ['brains','Brains'],['commits','Commits'],
+  ['improve','RSI'],['cost','Cost & Scale'],['evals','Evals'],['skills','Skills & Tools'],['agent','Agent & Workspace']
+];
+// Print the build stamp AND the tab count: if you see an old stamp or fewer tabs,
+// you are looking at a cached copy, not at what the server has.
+document.getElementById('stamp').textContent =
+  'build ' + D.generated + ' · ' + TABS.length + ' tabs';
+const nav=document.getElementById('nav'), main=document.getElementById('main');
+TABS.forEach(([id,label],i)=>{
+  const b=document.createElement('button');b.textContent=label;b.id='nav-'+id;
+  b.onclick=()=>show(id);nav.appendChild(b);
+  const s=document.createElement('section');s.className='tab';s.id='tab-'+id.replace(':','-');main.appendChild(s);
+});
+function show(id){
+  const sec='tab-'+id.replace(':','-');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id==='nav-'+id));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===sec));
+  location.hash=id;
+}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const badge=(t,cls)=>`<span class="badge b-${cls}">${esc(t)}</span>`;
+
+// Prefer the map shipped beside this page (works on any host); fall back to
+// the GitLab raw URL, which needs CERN SSO.
+function mapLink(n){
+  const b=D.brains[n]||{};
+  const local=(D.docs||{}).maps_available||[];
+  if(local.includes(n)) return `<a href="${esc(b.map_local||'')}" target="_blank" rel="noopener">PCA map</a>`;
+  return b.map_url?`<a href="${esc(b.map_url)}" target="_blank" rel="noopener">PCA map (SSO)</a>`:'—';
+}
+
+function docLinks(){
+  const d=D.docs||{}; const b=[];
+  if(d.brains_tree) b.push(`<a href="${esc(d.brains_tree)}" target="_blank" rel="noopener">brain maps on GitLab</a>`);
+  if(d.repo) b.push(`<a href="${esc(d.repo)}" target="_blank" rel="noopener">source repo</a>`);
+  if(d.site) b.push(`<a href="${esc(d.site)}" target="_blank" rel="noopener">this site</a>`);
+  return b.length?`<p class="small">${b.join(' · ')} <span class="small">(CERN SSO)</span></p>`:'';
+}
+
+/* ---------- GRAPHS (shared by the Pipes tab and every config DAG tab) ---------- */
+const LEGEND=()=>`<p class="small">${badge('solid green','ok')} demonstrated by a run &nbsp; ${badge('dashed amber','warn')} partial &nbsp; ${badge('dotted grey','dim')} architectural (not yet traversed by one event) &nbsp; ${badge('inferred','bad')} no citation — treat as a hypothesis</p>`;
+
+function ledger(rows){
+  if(!rows.length) return '';
+  const body=rows.map(([a,b,desc,st,note])=>{
+    const cls=st==='demonstrated'?'ok':st==='partial'?'warn':st==='inferred'?'bad':'dim';
+    return `<tr><td><code>${esc(a)}</code> → <code>${esc(b)}</code></td><td>${esc(desc)}</td>
+      <td>${badge(st,cls)}</td><td class="small">${esc(note||'— no evidence recorded —')}</td></tr>`;}).join('');
+  return `<h2>Edge ledger</h2><div class="wrap"><table><tr><th>edge</th><th>meaning</th><th>status</th><th>evidence</th></tr>${body}</table></div>`;
+}
+
+// Layered left-to-right layout. A node's column is its declared `layer`, else a
+// longest-path depth computed from the edges, so a DAG draws without hand-tuning.
+function layout(nodes, pipes){
+  const names=nodes.map(n=>n.name);
+  const declared={}; nodes.forEach(n=>{if(n.layer!=null)declared[n.name]=+n.layer;});
+  const inc={}; names.forEach(n=>inc[n]=0);
+  pipes.forEach(([a,b])=>{if(a in inc&&b in inc)inc[b]++;});
+  const depth={}; names.forEach(n=>depth[n]=declared[n.name]??0);
+  for(let it=0;it<names.length;it++){          // relax: depth[b] > depth[a]+1
+    let moved=false;
+    pipes.forEach(([a,b])=>{if(a in depth&&b in depth&&depth[b]<depth[a]+1){depth[b]=depth[a]+1;moved=true;}});
+    if(!moved)break;
+  }
+  const layerOf=n=>declared[n.name]??depth[n];
+  const byLayer={};
+  names.forEach(n=>{(byLayer[layerOf(n)]=byLayer[layerOf(n)]||[]).push(n)});
+  const layers=Object.keys(byLayer).map(Number).sort((x,y)=>x-y);
+  const W=1100, rowH=110, H=Math.max(360, layers.length>1?360:(byLayer[layers[0]]||[]).length*rowH+120);
+  const colGap=layers.length>1?(W-300)/(layers.length-1):0;
+  const pos={};
+  layers.forEach(L=>{const ns=byLayer[L];ns.forEach((n,i)=>{
+    pos[n]={x:150+L*colGap, y:70+i*(H-140)/Math.max(1,ns.length-1)+(ns.length===1?(H-140)/2:0)};
+  });});
+  return {pos,W,H,layers};
+}
+
+function layoutFrom(pos){
+  const xs=Object.values(pos).map(p=>p.x), ys=Object.values(pos).map(p=>p.y);
+  return {W:Math.max(700,Math.max(...xs)+300), H:Math.max(320,Math.max(...ys)+90)};
+}
+
+function drawGraph(pipes, pos){
+  const {W,H}=layoutFrom(pos);
+  let svg=`<svg viewBox="0 0 ${W} ${H}">`;
+  svg+=`<defs><marker id="mg" class="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0L7,3L0,6z"/></marker>
+  <marker id="mw" class="arrow-w" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0L7,3L0,6z"/></marker>
+  <marker id="ma" class="arrow-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0L7,3L0,6z"/></marker></defs>`;
+  pipes.forEach(([a,b,desc,st])=>{
+    if(!(a in pos)||!(b in pos))return;
+    const p1=pos[a],p2=pos[b];
+    const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
+    const cls=st==='demonstrated'?'edge-d':st==='partial'?'edge-p':'edge-a';
+    const mk=st==='demonstrated'?'url(#mg)':st==='partial'?'url(#mw)':'url(#ma)';
+    svg+=`<path class="${cls}" d="M${p1.x+95},${p1.y} C${mx},${p1.y} ${mx},${p2.y} ${p2.x-8},${p2.y}" marker-end="${mk}"/>`;
+    const short=desc.length>46?desc.slice(0,44)+'…':desc;
+    svg+=`<text class="edgelbl" x="${mx}" y="${my-8}" text-anchor="middle">${esc(short)}</text>`;
+  });
+  return svg;
+}
+function drawNodes(nodes, pos){
+  let svg='';
+  nodes.forEach(({name,note,link})=>{
+    const p=pos[name]; if(!p)return;
+    const br=(D.brains||{})[name];
+    const sub=note||(br&&br.docs!=null?br.docs+' chunks':(br?'':'not a brain'));
+    // a linked node gets an accent border and is a real anchor in the SVG
+    const stroke=link?'#58a6ff':'#30363d';
+    const g=`<g><rect x="${p.x-95}" y="${p.y-26}" width="190" height="52" rx="8" fill="#1c2128" stroke="${stroke}"/>
+      <text class="nodelbl" x="${p.x}" y="${p.y-4}" text-anchor="middle">${esc(name)}</text>
+      <text class="nodesub" x="${p.x}" y="${p.y+14}" text-anchor="middle">${esc(sub.length>34?sub.slice(0,32)+'…':sub)}</text></g>`;
+    svg+=link?`<a href="${esc(link)}" target="_blank" rel="noopener" title="${esc(link)}">${g}</a>`:g;
+  });
+  return svg;
+}
+
+function renderGraphInto(sec, title, subtitle, nodes, pipes){
+  const {pos}=layout(nodes,pipes);
+  const svg=drawGraph(pipes,pos)+drawNodes(nodes,pos)+'</svg>';
+  document.getElementById(sec).innerHTML=
+    `<h2>${esc(title)}</h2>${subtitle?`<p class="small">${esc(subtitle)}</p>`:''}${svg}${LEGEND()}${ledger(pipes)}`;
+}
+
+/* ---------- PIPES (cross-brain graph) ---------- */
+function renderPipes(){
+  const names=[...new Set(D.pipes.map(p=>p[0]).concat(D.pipes.map(p=>p[1])).filter(n=>n!=='*'))];
+  const nodes=names.map(n=>({name:n, note:''}));
+  renderGraphInto('tab-pipes','Data / control flow between brains',
+    'Cross-project view. Each analysis or reconstruction DAG has its own tab.',
+    nodes, D.pipes);
+}
+
+/* ---------- CONFIG DAGS ---------- */
+function renderGraphs(){
+  (D.graphs||[]).forEach(g=>{
+    const bits=[];
+    if(g.repo) bits.push(`repo <code>${esc(g.repo)}</code>`);
+    if(g.source) bits.push(`DAG read from <code>${esc(g.source.split('/').slice(-2).join('/'))}</code>`);
+    if(g.link) bits.push(`<a href="${esc(g.link)}" target="_blank" rel="noopener">${esc(g.link_label||'live site')}</a>`);
+    else if(g.link_note) bits.push(esc(g.link_note));
+    renderGraphInto('tab-g-'+g.id, g.label, bits.join(' · '), g.nodes, g.pipes);
+  });
+}
+
+/* ---------- BRAINS ---------- */
+function renderBrains(){
+  const cards=Object.entries(D.brains).map(([n,b])=>{
+    const r=b;
+    const docsOk=b.docs!=null&&b.docs>0;
+    return `<div class="card"><h3>${esc(n)} ${docsOk?badge(b.docs.toLocaleString()+' chunks','info'):badge('no index','bad')}</h3>
+      <div class="kv"><span>branch</span><b>${esc(r.branch||'—')}</b></div>
+      <div class="kv"><span>HEAD</span><b class="mono">${esc(r.head||'—')} <span class="small">${esc(r.head_date||'')}</span></b></div>
+      <div class="kv"><span>sync</span><b class="small">${esc((r.ahead_behind||'').replace(/^## /,''))}</b></div>
+      <div class="kv"><span>working tree</span><b>${r.dirty?badge(r.dirty+' dirty','warn'):badge('clean','ok')}</b></div>
+      <div class="kv"><span>last msg</span><b class="small">${esc((r.head_msg||'').slice(0,60))}</b></div>
+      <div class="kv"><span>rag_db</span><b class="small mono">${esc(b.db)}</b></div>
+      <div class="kv"><span>brain map</span><b>${mapLink(n)}</b></div>
+    </div>`;}).join('');
+  document.getElementById('tab-brains').innerHTML=
+    `<h2>Registered brains (rag-memory MCP)</h2>${docLinks()}<div class="cards">${cards}</div>
+     <p class="small">Index health: <code>rag_status</code> via MCP · rebuild: <code>rebuild_index.py</code> · maps in <code>docs/brains/</code></p>`;
+}
+
+/* ---------- COMMITS ---------- */
+function renderCommits(){
+  let out='<h2>Commit history per brain repository (last 8)</h2>';
+  for(const [n,b] of Object.entries(D.brains)){
+    const r=b;
+    if(r.missing){out+=`<h3>${esc(n)} — repo missing</h3>`;continue;}
+    const rows=(r.commits||[]).map(c=>`<tr><td class="mono">${esc(c.h)}</td><td>${esc(c.date)}</td>
+      <td class="small">${esc(c.author)}</td><td>${esc(c.msg)}</td></tr>`).join('');
+    out+=`<details ${b.note?'open':''}><summary><b>${esc(n)}</b> <span class="small">on <code>${esc(r.branch)}</code> · ${esc(r.head)} · ${r.dirty?badge(r.dirty+' dirty','warn'):badge('clean','ok')}</span></summary>
+    <div class="wrap"><table>${rows}</table></div></details>`;
+  }
+  document.getElementById('tab-commits').innerHTML=out;
+}
+
+/* ---------- RSI (one-look story: what changed, on what, did it hold) ---------- */
+function renderImprove(){
+  const im=D.improve||{}, sec=document.getElementById('tab-improve');
+  const g=im.guard||{}, bt=im.by_target||{}, ch=im.changes||[], tr=im.trend||[];
+  const TARGETS=[['agent','prompts · tool policy · top_k','task completion'],['brain','index build params','recall@5 · MRR'],['framework','gates · builder · publisher','controls still fail']];
+
+  // 1. trend sparkline: gold pass rate over logged runs
+  let spark='';
+  if(tr.length>1){
+    const W=680,H=110,pad=34, max=(tr[tr.length-1].total||1);
+    const x=i=>pad+i*(W-pad-10)/Math.max(1,tr.length-1);
+    const y=v=>H-14-(v/max)*(H-34);
+    const pts=tr.map((h,i)=>`${x(i)},${y(h.passed||0)}`).join(' ');
+    spark=`<svg viewBox="0 0 ${W} ${H}"><line x1="${pad}" y1="${y(max)}" x2="${W-10}" y2="${y(max)}" stroke="#30363d"/>
+      <text class="nodesub" x="${pad-6}" y="${y(max)+4}" text-anchor="end">${max}</text>
+      <text class="nodesub" x="${pad-6}" y="${H-12}" text-anchor="end">0</text>
+      <polyline points="${pts}" fill="none" stroke="#58a6ff" stroke-width="2"/>
+      ${tr.map((h,i)=>`<circle cx="${x(i)}" cy="${y(h.passed||0)}" r="4" fill="${h.ok?'#3fb950':'#f85149'}"><title>${esc(h.ts)} — ${h.passed}/${h.total}</title></circle>`).join('')}
+      </svg><p class="small">gold-set pass count per graded run · ${tr.length} runs · n is small, treat as a trace not a trend</p>`;
+  } else spark='<p class="small">need ≥2 graded runs for a trend</p>';
+
+  // 2. the three objects and their metrics
+  const cards=TARGETS.map(([k,what,metric])=>{
+    const d=bt[k]||{n:0,kept:0};
+    return `<div class="card"><h3>${esc(k)} ${d.n?badge(d.kept+'/'+d.n+' kept','info'):badge('no changes yet','dim')}</h3>
+      <div class="kv"><span>what changes</span><b class="small">${esc(what)}</b></div>
+      <div class="kv"><span>metric</span><b class="small">${esc(metric)}</b></div></div>`;}).join('');
+
+  // 3. guard metrics — must not regress
+  const guard=(n,v,tot,note)=>`<div class="card"><h3>${esc(n)}</h3>
+      <div class="kv"><span>value</span><b>${v==null?'—':v}${tot!=null?' / '+tot:''}</b></div>
+      <div class="kv"><span>rule</span><b class="small">${esc(note)}</b></div></div>`;
+  const guards=guard('gold pass',g.gold_pass,g.gold_total,'must not fall when anything is tuned')
+    +guard('negative controls',g.negative_controls,g.negative_controls_total,'must stay a MISS — a pass here means the tool is lying')
+    +guard('runs logged',g.runs_logged,null,'≥20 before a regression claim means anything');
+
+  // 4. the ledger, newest first
+  const rows=[...ch].reverse().map(c=>`<tr>
+      <td class="small">${esc((c.ts||'').slice(0,16).replace('T',' '))}</td>
+      <td>${badge(c.target||'?',c.target==='brain'?'info':c.target==='agent'?'warn':'dim')}</td>
+      <td>${esc(c.change||'')}</td>
+      <td class="small">${esc(c.before||'—')} → <b>${esc(c.after||'—')}</b></td>
+      <td>${c.keep===false||c.kept===false?badge('reverted','bad'):badge('kept','ok')}</td>
+      <td class="small">${esc(c.reason||'')}${c.ref?'<br><code>'+esc(c.ref)+'</code>':''}</td></tr>`).join('');
+
+  sec.innerHTML=`
+    <h2>Is it working? ${g.gold_pass!=null?badge(g.gold_pass+'/'+g.gold_total+' gold',g.gold_pass===g.gold_total?'ok':'warn'):badge('no grade','dim')}
+      ${ch.length?badge(ch.length+' changes logged','info'):''}</h2>
+    <p class="small">Three objects improve at different rates and are measured separately — a failed gold item does
+    not say <i>which</i> one is at fault, so every change declares its target. The agent's judgement (its
+    markdown contract) is <b>not</b> a tunable: an unevidenced claim is not a parameter miss.</p>
+
+    <h2>What the score is, and how it is measured</h2>
+    <div class="wrap"><table>
+      <tr><th>item</th><th>value</th><th>how it is produced</th></tr>
+      <tr><td><b>Score</b></td><td>${g.gold_pass}/${g.gold_total}</td>
+        <td class="small">count of gold items that PASS. An item is a natural-language query plus an
+        expected <code>doc_path</code> regex. The query is embedded, the index returns ranked chunks, and the item
+        passes when a chunk whose path matches the regex appears within the top-k. A miss, or a hit only below
+        top-k, is a failure. Graded by <code>bench_evals.py</code>, which exits non-zero on any failure — the
+        number is a gate, not a report.</td></tr>
+      <tr><td><b>Where it comes from</b></td><td class="small">${esc(((D.evals||{}).gold||[]).length)} gold sets</td>
+        <td class="small">hand-written from pipeline configs, READMEs and branch diffs — <b>not</b> generated from
+        the corpus, so it cannot be inflated by adding documents. Frozen: the improver has no write access to it.</td></tr>
+      <tr><td><b>Guard: negative controls</b></td><td>${g.negative_controls}/${g.negative_controls_total}</td>
+        <td class="small">deliberately meaningless queries ("purple flamingo cross section…"). They must
+        <b>miss</b>: if the top cosine similarity exceeds 0.45 the index is scoring confidently on nonsense and
+        every other number on this page is untrustworthy. A pass here is a failure.</td></tr>
+      <tr><td><b>Guard: runs logged</b></td><td>${g.runs_logged}</td>
+        <td class="small">appended to <code>evals/runs.jsonl</code> per grading run. Below ~20 runs the trend line
+        is a trace, not evidence of improvement — a single re-grade can move it several points.</td></tr>
+      <tr><td><b>What is NOT in the score</b></td><td class="small">—</td>
+        <td class="small">retrieval rank quality beyond the pass threshold, latency, token cost, and whether the
+        agent's <i>conclusion</i> was right. A correct answer reached from a wrong citation scores full marks;
+        that gap is why unevidenced claims are policed by rule, not by this metric.</td></tr>
+    </table></div>
+    <p class="small"><b>Kept-or-reverted rule:</b> a change is kept only if the score rises <i>and</i> no
+    previously-passing item regresses <i>and</i> the negative controls still miss. Any one of those failing
+    reverts the change.</p>
+    <h2>Score over time</h2>${spark}
+    <h2>What can change, and how it is measured</h2><div class="cards">${cards}</div>
+    <h2>Guards — a change is kept only if these hold</h2><div class="cards">${guards}</div>
+    <h2>Change ledger (append-only, newest first)</h2>
+    <div class="wrap"><table><tr><th>when</th><th>target</th><th>change</th><th>before → after</th><th>verdict</th><th>why</th></tr>${rows}</table></div>
+    <p class="small">Ledger: <code>evals/changes.jsonl</code> — append-only, and the gold sets are outside the
+    improver's write path so a score cannot be bought by editing the test.</p>`;
+}
+
+/* ---------- COST & SCALE ---------- */
+function renderCost(){
+  const c=D.cost; const sec=document.getElementById('tab-cost');
+  if(!c){sec.innerHTML='<p class="small">no <code>cost:</code> section in the config</p>';return;}
+  const M=x=>(x/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
+  const K=x=>(x/1e3).toLocaleString(undefined,{maximumFractionDigits:1});
+  const cpt=c.chars_per_token||4, T=c.total;
+  const perQ=c.top_k*c.tokens_per_chunk+c.answer_tokens;
+
+  const rows=Object.entries(c.per_brain).sort((a,b)=>b[1].chunks-a[1].chunks).map(([n,v])=>
+    `<tr><td><b>${esc(n)}</b></td><td>${v.chunks.toLocaleString()}</td><td>${M(v.chars)}</td>
+     <td>${M(v.chunks*(c.tokens_per_chunk||0))}</td><td>${v.index_mb}</td>
+     <td>${mapLink(n)}</td></tr>`).join('');
+
+  const usage=(c.queries_per_day||[]).map(q=>{
+    const day=q*perQ, yr=day*365, embYr=(T.tokens_total||0)*(c.rebuilds_per_year||0);
+    return `<tr><td>${q} queries/day</td><td>${K(day)}</td><td>${M(yr)}</td>
+      <td>${M(embYr)}</td><td>${esc(c.top_k)} chunks ≈ ${c.top_k*(c.tokens_per_chunk||0)} tok in + ${c.answer_tokens} out</td></tr>`;}).join('');
+
+  const inf=(c.inference||[]).map(i=>{
+    const perEv=i.ms_per_event!=null?i.ms_per_event:(i.ms_per_batch!=null&&i.batch?i.ms_per_batch/i.batch:null);
+    const cap=perEv?(1000/perEv):null;
+    return `<tr><td><b>${esc(i.model)}</b><br><span class="small">${esc(i.device||'')}</span></td>
+      <td>${i.ms_per_batch!=null?i.ms_per_batch+' ms / '+i.batch+'<br><span class="small">±'+(i.std_ms||'?')+' ms, n='+(i.n_samples||'?')+'</span>':'—'}</td>
+      <td>${perEv!=null?perEv.toFixed(4)+' ms':'—'}</td>
+      <td>${cap?Math.round(cap).toLocaleString()+' /s':'—'}</td>
+      <td>${cap?M(cap*86400)+' M/day':'—'}</td>
+      <td>${i.onnx_bytes?(i.onnx_bytes/1024).toFixed(0)+' KB':'—'}</td>
+      <td class="small">${esc(i.source||'— no source —')}${i.caveat?'<br><i>'+esc(i.caveat)+'</i>':''}</td></tr>`;}).join('');
+
+  const e=c.embedder||{};
+  sec.innerHTML=`
+   <h2>Corpus — measured from the indexes at build time</h2>
+   <div class="cards">
+     <div class="card"><h3>${T.chunks.toLocaleString()} chunks</h3><div class="kv"><span>stored text</span><b>${M(T.chars)} M chars</b></div>
+       <div class="kv"><span>≈ tokens</span><b>${M(T.tokens_total||0)} M</b></div>
+       <div class="kv"><span>at</span><b>${cpt} chars/token (estimate)</b></div>
+       <div class="kv"><span>index on disk</span><b>${T.index_mb} MB</b></div></div>
+     <div class="card"><h3>Embedding model</h3>
+       <div class="kv"><span>name</span><b>${esc(e.name||'—')}</b></div>
+       <div class="kv"><span>parameters</span><b>${e.params?(e.params/1e6).toFixed(1)+' M':'needs_review'}</b></div>
+       <div class="kv"><span>dim</span><b>${e.dim||'—'}</b></div>
+       <div class="kv"><span>role</span><b class="small">${esc(e.note||'')}</b></div>
+       <div class="kv"><span>source</span><b class="small">${esc(e.source||'')}</b></div></div>
+     <div class="card"><h3>Per query</h3>
+       <div class="kv"><span>top_k</span><b>${c.top_k}</b></div>
+       <div class="kv"><span>context</span><b>${c.top_k*(c.tokens_per_chunk||0)} tokens</b></div>
+       <div class="kv"><span>answer</span><b>${c.answer_tokens} tokens</b></div>
+       <div class="kv"><span>total</span><b>${perQ} tokens</b></div></div>
+   </div>
+   ${docLinks()}
+   <h2>Per brain</h2><div class="wrap"><table><tr><th>brain</th><th>chunks</th><th>M chars</th><th>≈M tokens</th><th>index MB</th><th>map</th></tr>${rows}</table></div>
+   <h2>LLM tokens per day / year</h2><div class="wrap"><table><tr><th>usage</th><th>tokens/day</th><th>tokens/yr</th><th>embed tokens/yr</th><th>per query</th></tr>${usage}</table></div>
+   <h2>Plugged models — measured latency</h2><div class="wrap"><table><tr><th>model</th><th>batch latency</th><th>per event</th><th>events/s</th><th>capacity/day</th><th>artefact</th><th>source</th></tr>${inf}</table></div>
+   <h2>Caveats</h2><ul class="small">${(c.notes||[]).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul>`;
+}
+
+/* ---------- EVALS ---------- */
+function renderEvals(){
+  const ev=D.evals, L=ev.latest;
+  let head='';
+  if(L){
+    const pct=Math.round(100*L.passed/L.total);
+    head=`<div class="card"><div class="kv"><span>last run</span><b>${esc(L.ts)}</b></div>
+    <div class="kv"><span>verdict</span><b>${L.ok?badge('OK','ok'):badge('FAIL','bad')}</b></div>
+    <div class="kv"><span>passed</span><b>${L.passed}/${L.total} (${pct}%)</b></div>
+    <div class="bar" style="margin-top:6px"><i style="width:${pct}%;background:${L.ok?'var(--ok)':'var(--bad)'}"></i></div></div>`;
+  }
+  const perSet={};
+  ev.gold.forEach(s=>{perSet[s.id]={gold:s.items.length,db:(s.collection||''),status:s.status||'?',items:s.items}});
+  if(L&&L.results)L.results.forEach(r=>{const p=perSet[r.set];if(p){p.last_rank=r.rank;p.last_pass=r.pass;p.latency=r.latency_s;}});
+  const rows=Object.entries(perSet).map(([id,p])=>{
+    const st=p.last_pass===undefined?badge('not in last run','dim'):p.last_pass?badge('pass','ok'):badge('FAIL','bad');
+    return `<tr><td><b>${esc(id)}</b></td><td><code>${esc(p.db)}</code></td><td>${p.gold}</td>
+    <td>${p.last_rank===undefined?'—':'rank '+p.last_rank}</td><td>${p.latency!==undefined?p.latency.toFixed(2)+'s':'—'}</td><td>${st}</td></tr>`;}).join('');
+  const fails=(L&&L.results||[]).filter(r=>!r.pass).map(r=>
+    `<tr><td>${esc(r.set)}</td><td>${esc(r.query)}</td><td>rank ${r.rank}</td><td>${r.needs_review?badge('needs_review','warn'):''}</td></tr>`).join('');
+  // run history: sparkline of every bench_evals run in runs.jsonl
+  const hist=ev.history||[];
+  let histHtml='<p class="small">no runs recorded</p>';
+  if(hist.length){
+    const W=Math.max(360,hist.length*90),H=150,base=H-30;
+    const y=v=>base-(v/Math.max(...hist.map(h=>h.total))*100);
+    let pts=hist.map((h,i)=>`${40+i*90},${y(h.passed)}`).join(' ');
+    let svg=`<svg viewBox="0 0 ${W} ${H}"><line x1="30" y1="${base}" x2="${W-10}" y2="${base}" stroke="#30363d"/>`;
+    svg+=`<polyline fill="none" stroke="#58a6ff" stroke-width="2" points="${pts}"/>`;
+    hist.forEach((h,i)=>{
+      const cx=40+i*90;
+      svg+=`<circle cx="${cx}" cy="${y(h.passed)}" r="5" fill="${h.ok?'#3fb950':'#f85149'}"/>`;
+      svg+=`<text class="nodesub" x="${cx}" y="${y(h.passed)-10}" text-anchor="middle">${h.passed}/${h.total}</text>`;
+      svg+=`<text class="nodesub" x="${cx}" y="${base+14}" text-anchor="middle">${esc(h.ts.slice(5,16).replace('T',' '))}</text>`;});
+    histHtml=svg+'</svg>';
+  }
+  document.getElementById('tab-evals').innerHTML=
+    `<h2>Latest bench_evals run</h2>${head}
+     <h2>Run history (evals/runs.jsonl)</h2>${histHtml}
+     <h2>Gold sets</h2><div class="wrap"><table><tr><th>set</th><th>index</th><th>items</th><th>last rank</th><th>latency</th><th>status</th></tr>${rows}</table></div>
+     ${fails?`<h2>Failing items</h2><div class="wrap"><table><tr><th>set</th><th>query</th><th>rank</th><th></th></tr>${fails}</table></div>`:''}
+     <p class="small">Run: <code>python3 evals/bench_evals.py</code> — verdict gates regressions; a failing item blocks the pipeline that consumes that index.</p>`;
+}
+
+/* ---------- SKILLS & TOOLS ---------- */
+function renderSkills(){
+  let out='<h2>Skills inventory</h2>';
+  D.skills.forEach(([label,names])=>{
+    out+=`<h3>${esc(label)} <span class="small">(${names.length})</span></h3><div class="chips">`+
+      names.map(n=>`<span class="chip">${esc(n)}</span>`).join('')+`</div>`;});
+  const rows=D.tools.map(([t,d])=>`<tr><td><code>${esc(t)}</code></td><td>${esc(d)}</td></tr>`).join('');
+  out+=`<h2>Tools</h2><div class="wrap"><table><tr><th>tool</th><th>role</th></tr>${rows}</table></div>`;
+  document.getElementById('tab-skills').innerHTML=out;
+}
+
+/* ---------- AGENT & WORKSPACE ---------- */
+function renderAgent(){
+  const d=D.dali;
+  const steps=d.steps.map(s=>`<tr><td><code>${esc(s.id)}</code></td><td>${esc(s.desc)}</td><td>${s.checks}</td></tr>`).join('');
+  const log=d.log.map(e=>`<tr><td class="mono">${esc(e.ts||e.date||'')}</td><td>${esc(e.step||e.action||'')}</td><td class="small">${esc(JSON.stringify(e.result||e.outcome||e.note||'').slice(0,160))}</td></tr>`).join('');
+  const agents=[
+    ['DALI orchestrator (this agent)','stage machine setup→index→claims→reconcile→build→run→report; membrane-gated; escalates after 3 fails'],
+    ['explore subagent','read-only codebase search; used for repo archaeology'],
+    ['general subagent','multi-unit work: parallel rebuilds, diagram drafts'],
+    ['reviewer-referee / commenter skills','gate-based review of notes/drafts'],
+    ['membrane','not an agent — the semipermeable boundary every data read crosses'],
+  ].map(([a,r])=>`<tr><td><b>${esc(a)}</b></td><td>${esc(r)}</td></tr>`).join('');
+  document.getElementById('tab-agent').innerHTML=
+    `<h2>Pipeline steps (state/pipeline.yaml)</h2><div class="wrap"><table><tr><th>step</th><th>description</th><th>checks</th></tr>${steps||'<tr><td colspan=3 class="small">pipeline.yaml not parsed — see workspace</td></tr>'}</table></div>
+     <h2>Agents & roles</h2><div class="wrap"><table><tr><th>actor</th><th>role</th></tr>${agents}</table></div>
+     <h2>Recent workspace log (state/log.jsonl)</h2><div class="wrap"><table><tr><th>ts</th><th>step</th><th>result</th></tr>${log}</table></div>`;
+}
+
+renderPipes();renderGraphs();renderBrains();renderImprove();renderCost();renderCommits();renderEvals();renderSkills();renderAgent();
+const want=(location.hash||'').slice(1);
+show(TABS.some(([id])=>id===want)?want:'pipes');
+</script>
+</body>
+</html>

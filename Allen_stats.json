@@ -1,0 +1,51 @@
+{
+  "chunks": 8840,
+  "files": 1286,
+  "dim": 384,
+  "mean_pairwise_cosine": 0.357,
+  "mean_distance_to_centroid": 0.4013,
+  "p95_distance_to_centroid": 0.5749,
+  "top_buckets": [
+    [
+      "device",
+      5477
+    ],
+    [
+      "configuration",
+      1699
+    ],
+    [
+      "Rec",
+      431
+    ],
+    [
+      "ReleaseNotes",
+      252
+    ],
+    [
+      "stream",
+      214
+    ],
+    [
+      "checker",
+      181
+    ],
+    [
+      "main",
+      163
+    ],
+    [
+      "Dumpers",
+      116
+    ],
+    [
+      "host",
+      108
+    ],
+    [
+      "scripts",
+      74
+    ]
+  ],
+  "pca_explained_variance_2d": 0.2096
+}
